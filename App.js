@@ -3,24 +3,41 @@ import { StyleSheet, Text, View, Image, TextInput, TouchableOpacity, KeyboardAvo
 
 export default class App extends React.Component {
   fetch_login(login, pass){
-    fetch('http://176.213.36.17:28015/login',{
+    fetch('http://176.213.36.17:28015/mlogin',{
       method: 'POST',
       headers: {
         'Accept': 'application/json',
         'Content-Type': 'application/json',
         'Origin': ''
-  },
+      },
       body: JSON.stringify({
         email: login,
         password: pass,
       })
-    }).then((response) =>{console.log(login+" "+pass); console.log(response)});
+    }).then((response) => (JSON.parse(response._bodyText)))
+    .then((res) => console.log((res)))
+    .catch((error) => {
+      console.error(error);
+    });
   }
+
+  getMoviesFromApiAsync() {
+      fetch('https://facebook.github.io/react-native/movies.json')
+        .then((response) => (JSON.parse(response._bodyText)))
+        .then((res) => console.log((res.movies[0])))
+        .catch((error) => {
+          console.error(error);
+        });
+    }
+
+
   constructor(props){
     super(props);
     this.state = {
       email: '',
-      password: ''
+      password: '',
+      username: '',
+      files: []
     };
   }
   render() {
@@ -47,7 +64,7 @@ export default class App extends React.Component {
               style={styles.input}
               onChangeText={(text) => this.setState({password: text})}
             />
-            <TouchableOpacity onPress={() => {this.fetch_login(this.state.email, this.state.password);console.log("hello world");}}
+            <TouchableOpacity onPress={() => {this.fetch_login(this.state.email,this.state.password);console.log("hello world");}}
               style={styles.buttonContainer}>
               <Text style={styles.buttonText}>SignIn</Text>
             </TouchableOpacity>
